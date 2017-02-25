@@ -18,7 +18,7 @@ Run the nginx-proxy proxy:
 
 Pass configuration information by environment file (see examples below):
 
-    docker run -d -p 2222:9292 --env-file our.env --restart unless-stopped -v /var/lib/geminabox-data:data:rw woodie/geminabox-ldap
+    docker run -d -p 2222:9292 --env-file our.env --restart unless-stopped -v /var/lib/geminabox-data:/app/data:rw woodie/geminabox-ldap
 
 
 ### Configuration
@@ -37,8 +37,8 @@ The default configuration uses a sample LDAP server. Use `LDAP_MEMBER` to restri
 
 ```shell
 LDAP_ATTRIBUTE=uid
-LDAP_BASE='DC=example,DC=com'
-LDAP_MEMBER='OU=scientists'
+LDAP_BASE=DC=example,DC=com
+LDAP_MEMBER=OU=scientists
 LDAP_HOST=ldap.forumsys.com
 ```
 
@@ -46,18 +46,18 @@ For LDAP autentication, we must be able to construct a user's DN from `LDAP_BRAN
 
 ```shell
 LDAP_ATTRIBUTE=uid
-LDAP_BASE='DC=zflexsoftware,DC=com'
-LDAP_BRANCH='OU=users,OU=developers'
-LDAP_MEMBER='CN=devgroup1'
+LDAP_BASE=DC=zflexsoftware,DC=com
+LDAP_BRANCH=OU=users,OU=developers
+LDAP_MEMBER=CN=devgroup1
 LDAP_HOST=www.zflexldap.com
 ```
 
-For Active Directory, we bind using `sAMAccountname` and `LDAP_BASE` to to bind.
+For Active Directory, we bind using `sAMAccountname` and `LDAP_BASE` to bind.
 
 ```shell
 LDAP_ATTRIBUTE=sAMAccountname
-LDAP_BASE='DC=example,DC=com'
-LDAP_MEMBER='CN=DEVELOPERS'
+LDAP_BASE=DC=example,DC=com
+LDAP_MEMBER=CN=DEVELOPERS
 LDAP_HOST=example.com
 ```
 
