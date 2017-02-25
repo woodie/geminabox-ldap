@@ -22,12 +22,11 @@ Geminabox::Server.helpers do
   end
 
   def container_id
-    hash = `hostname`.strip
-    hash.each_byte.map { |b| b.to_s(16) }.join[0..11] if hash.size > 12
+    `hostname`.strip
   end
 
   def member(user, pass)
-    return true if pass.eql?(container_id) unless ENV['BACKDOOR'].nil?
+    return true if pass.eql?(container_id) and ENV['BACKDOOR'].eql?('allow')
     return false if user.empty? or pass.empty?
     config = ldap_config
     # should also support bind_dn and bind_pw
