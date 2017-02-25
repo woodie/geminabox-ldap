@@ -52,7 +52,7 @@ LDAP_MEMBER=CN=devgroup1
 LDAP_HOST=www.zflexldap.com
 ```
 
-For Active Directory, we bind using `sAMAccountname` and `LDAP_BASE` to bind.
+For Active Directory, we use `sAMAccountname` and `LDAP_BASE` to bind.
 
 ```shell
 LDAP_ATTRIBUTE=sAMAccountname
