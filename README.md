@@ -1,11 +1,12 @@
 # geminabox-ldap
 Gem "in a box" with LDAP/AD authentication &amp; branding for Docker
 
+
 ### Usage
 
 To quickly run geminabox-ldap:
 
-    docker run -d woodie/geminabox-ldap
+    docker run -d -p 2222:9292 woodie/geminabox-ldap
 
 To upload a gem, authenticate as `tesla` with password `password`.
 
@@ -17,12 +18,13 @@ Run the nginx-proxy proxy:
 
 Pass configuration information by environment file (see examples below):
 
-    docker run -d --env-file our.env -p 2222:9292 --restart unless-stopped -v /var/lib/geminabox-data:data:rw woodie/geminabox-ldap
+    docker run -d -p 2222:9292 --env-file our.env --restart unless-stopped -v /var/lib/geminabox-data:data:rw woodie/geminabox-ldap
+
 
 ### Configuration
 
-Any environment variables that should be passwd to the container can go in this file.
-The `VIRTUAL_HOST` is used by the Nginx, the `HEADER_IMAGE` replaces the generic image,
+Any environment variables that should be passed to the container can go in this file.
+The `VIRTUAL_HOST` is used by the Nginx, the `HEADER_IMAGE` will replace the generic image,
 and the `BACKDOOR` provides an upload token for users that have already authenticated.
 
 ```shell
@@ -40,7 +42,7 @@ LDAP_MEMBER='OU=scientists'
 LDAP_HOST=ldap.forumsys.com
 ```
 
-For LDAP autentication, we must be able to construct a user' DN from `LDAP_BRANCH` and `LDAP_BASE`.
+For LDAP autentication, we must be able to construct a user's DN from `LDAP_BRANCH` and `LDAP_BASE`.
 
 ```shell
 LDAP_ATTRIBUTE=uid
@@ -58,6 +60,7 @@ LDAP_BASE='DC=example,DC=com'
 LDAP_MEMBER='CN=DEVELOPERS'
 LDAP_HOST=example.com
 ```
+
 
 ### Documentation
 
