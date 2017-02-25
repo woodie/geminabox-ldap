@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gem in a Box</title>
+    <link rel="stylesheet" href="<%= url "/master.css", false %>" type="text/css" media="screen">
+    <link href="<%= url "/atom.xml", false %>" type="application/atom+xml" rel="alternate" title="Atom Feed">
+    <style>
+      dl {text-align:left; padding: 0 20px; font-size:11pt;}
+      dt {font-weight:bold;}
+      dd {margin-bottom:6pt;}
+    </style>
+  </head>
+  <body style="background: #fff;">
+    <div id="content">
+      <a href="/"><img style="max-width:500px;" src="<%= HEADER_IMAGE %>"></a>
+      <div>Gem &ldquo;in a Box&ldquo; Server</div>
+      <%= yield %>
+    </div>
+    <script type="text/javascript" src="<%= url "/jquery.js", false %>"></script>
+    <script type="text/javascript" src="<%= url "/master.js", false %>"></script>
+  </body>
+</html>

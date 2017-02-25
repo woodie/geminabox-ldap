@@ -1,0 +1,46 @@
+<p>
+<a href="/">Back to Gem Index</a>
+</p>
+
+<hr>
+
+<dl>
+  <dt>Why do we need an internal gem repository?</dt>
+  <dd>With our own repository, we can...<br>
+      &bull; publish/require our own proprietory gems,<br>
+      &bull; limit discoverable gems to those we've tested,<br>
+      &bull; rely upon standard commands to bundle, and<br>
+      &bull; remove and external dependency from the build.</dd>
+
+  <dt>How does the gem command learn about this new repository?</dt>
+  <dd>Add this repository to your gem sources:<br>
+      <code>gem sources -a http://<%= request.host %></code></dd>
+
+  <dt>How should the development process work?</dt>
+  <dd>The bundle process is scoped to the source is the Gemfile.
+      To pick up new gems, change the Gemfile back <code>source 'http://rubygems.org'</code> and bundle.
+      When you have a new set of gems working, change the Gemfile source back,
+      and <code>bundle install --force</code> to see what gems are missing.</dd>
+
+  <dt>How can we upload or delete gems from this repository?</dt>
+  <dd>Anyone <% if !@conf.member.nil? %>in the <code><%= @conf.member.split('=').last %></code> group<% end %>
+      can authenticate to to upload and delete gems.
+      Once the build requires specific gems, they should not be removed.</DD>
+
+  <dt>How can we avoid leaking my credentials?</dt>
+  <dd>When <code>BACKDOOR</code> is enabled, the <code>Container ID</code> can also be used as a password,
+      displayed (once <a href="/upload">authenticated</a>) in the instructions below.</dd>
+
+  <dt>How can we upload gems from the command-line?</dt>
+  <dd>Install the geminabox gem locally, then use the gem command:<br>
+      <code>gem inabox --host http://<%= @conf.user %>:<%= @conf.host %>@<%= request.host %> new.gem</code></dd>
+
+  <dt>How can we upload gems when Nginx complains about file-size limits?</dt>
+  <dd>Bypass Nginx by using the app server port directly:<br>
+      <code>gem inabox --host http://<%= @conf.user %>:<%= @conf.host %>@<%= request.host %>:<%= @conf.port %> new.gem</code></dd>
+
+  <dt>How can we we do bulk uploads?</dt>
+  <dd>No need to worry about uploading duplicate gems, use this command:<br>
+      <code>find . -name *.gem | xargs gem inabox \<br>--host http://<%= @conf.user %>:<%= @conf.host %>@<%= request.host %>:<%= @conf.port %></code></dd>
+
+</dl>
