@@ -16,11 +16,13 @@ You will want to use Nginx and setup a CNAME. For testing, add the hostname `rub
 
 Run the nginx-proxy proxy:
 
-    docker run -d -p 80:80 --restart unless-stopped -v /var/run/docker.sock:/tmp/docker.sock:ro woodie/nginx-proxy
+    docker run -d -p 80:80 --restart unless-stopped \
+    -v /var/run/docker.sock:/tmp/docker.sock:ro woodie/nginx-proxy
 
 Pass configuration information by environment file (see examples below):
 
-    docker run -d -p 2222:9292 --restart unless-stopped --env-file our.env -v /var/lib/geminabox-data:/app/data:rw woodie/geminabox-ldap
+    docker run -d -p 2222:9292 --restart unless-stopped --env-file our.env \
+    -v /var/lib/geminabox-data:/app/data:rw woodie/geminabox-ldap
 
 Make sure `/var/lib/geminabox-data` is backed up on the host.
 
