@@ -31,39 +31,31 @@ Any environment variables that should be passed to the container can go in `our.
 The `VIRTUAL_HOST` is used by the Nginx, the `HEADER_IMAGE` will replace the generic image,
 and the `AUTH_BACKDOOR` provides an upload token for users that have already authenticated.
 
-```shell
-VIRTUAL_HOST=rubygems.example.com
-HEADER_IMAGE=http://bit.ly/2lJIYsJ
-AUTH_BACKDOOR=allow
-```
+    VIRTUAL_HOST=rubygems.example.com
+    HEADER_IMAGE=http://bit.ly/2lJIYsJ
+    AUTH_BACKDOOR=allow
 
-The default configuration uses a sample LDAP server. Use `LDAP_MEMBER` to restrict gem uploads to that group.
+    # The default configuration uses a sample LDAP server.
+    # Use `LDAP_MEMBER` to restrict gem uploads to that group.
+    LDAP_ATTRIBUTE=uid
+    LDAP_BASE=DC=example,DC=com
+    LDAP_MEMBER=OU=scientists
+    LDAP_HOST=ldap.forumsys.com
 
-```shell
-LDAP_ATTRIBUTE=uid
-LDAP_BASE=DC=example,DC=com
-LDAP_MEMBER=OU=scientists
-LDAP_HOST=ldap.forumsys.com
-```
+    # For LDAP autentication, we must be able to construct
+    # a user's DN from `LDAP_BRANCH` and `LDAP_BASE`.
+    LDAP_ATTRIBUTE=uid
+    LDAP_BASE=DC=zflexsoftware,DC=com
+    LDAP_BRANCH=OU=users,OU=developers
+    LDAP_MEMBER=CN=devgroup1
+    LDAP_HOST=www.zflexldap.com
 
-For LDAP autentication, we must be able to construct a user's DN from `LDAP_BRANCH` and `LDAP_BASE`.
-
-```shell
-LDAP_ATTRIBUTE=uid
-LDAP_BASE=DC=zflexsoftware,DC=com
-LDAP_BRANCH=OU=users,OU=developers
-LDAP_MEMBER=CN=devgroup1
-LDAP_HOST=www.zflexldap.com
-```
-
-For Active Directory, we use `sAMAccountname` and `LDAP_BASE` to bind.
-
-```shell
-LDAP_ATTRIBUTE=sAMAccountname
-LDAP_BASE=DC=example,DC=com
-LDAP_MEMBER=CN=DEVELOPERS
-LDAP_HOST=example.com
-```
+    # For Active Directory, user DN need not include login.
+    # AD uses `sAMAccountname` and `LDAP_BASE` to bind.
+    LDAP_ATTRIBUTE=sAMAccountname
+    LDAP_BASE=DC=example,DC=com
+    LDAP_MEMBER=CN=DEVELOPERS
+    LDAP_HOST=example.com
 
 
 ### Documentation
