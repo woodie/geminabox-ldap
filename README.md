@@ -2,15 +2,17 @@
 Gem "in a box" with LDAP/AD authentication &amp; branding for Docker
 
 
-### Usage
+### Quick Demo
 
-To quickly run geminabox-ldap:
+To quickly run geminabox-ldap (without persistence):
 
     docker run -d -p 2222:9292 woodie/geminabox-ldap
 
 To upload a gem, authenticate as `tesla` with password `password`.
 
-If you want to use Nginx, setup a CNAME (or add a hostname like rubygems.example.com) to your `/etc/hosts` file.
+### Production Usage
+
+You will want to use Nginx and setup a CNAME. For testing, add the hostname `rubygems.example.com` to your `/etc/hosts` file.
 
 Run the nginx-proxy proxy:
 
@@ -18,19 +20,21 @@ Run the nginx-proxy proxy:
 
 Pass configuration information by environment file (see examples below):
 
-    docker run -d -p 2222:9292 --env-file our.env --restart unless-stopped -v /var/lib/geminabox-data:/app/data:rw woodie/geminabox-ldap
+    docker run -d -p 2222:9292 --restart unless-stopped --env-file our.env -v /var/lib/geminabox-data:/app/data:rw woodie/geminabox-ldap
+
+Make sure `/var/lib/geminabox-data` is backed up on the host.
 
 
 ### Configuration
 
-Any environment variables that should be passed to the container can go in this file.
+Any environment variables that should be passed to the container can go in `our.env`  file.
 The `VIRTUAL_HOST` is used by the Nginx, the `HEADER_IMAGE` will replace the generic image,
-and the `BACKDOOR` provides an upload token for users that have already authenticated.
+and the `AUTH_BACKDOOR` provides an upload token for users that have already authenticated.
 
 ```shell
 VIRTUAL_HOST=rubygems.example.com
 HEADER_IMAGE=http://bit.ly/2lJIYsJ
-BACKDOOR=allow
+AUTH_BACKDOOR=allow
 ```
 
 The default configuration uses a sample LDAP server. Use `LDAP_MEMBER` to restrict gem uploads to that group.

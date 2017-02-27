@@ -26,7 +26,7 @@ Geminabox::Server.helpers do
   end
 
   def member(user, pass)
-    return true if pass.eql?(container_id) and ENV['BACKDOOR'].eql?('allow')
+    return true if pass.eql?(container_id) and ENV['AUTH_BACKDOOR'].eql?('allow')
     return false if user.empty? or pass.empty?
     config = ldap_config
     # should also support bind_dn and bind_pw
