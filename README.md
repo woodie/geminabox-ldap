@@ -1,10 +1,10 @@
 # geminabox-ldap
-Gem "in a box" with LDAP/AD authentication &amp; branding for Docker
+Gem "in a box" with LDAP/AD authentication &amp; branding on Docker
 
 
 ### Quick Demo
 
-To quickly run geminabox-ldap (without persistence):
+Quickly run geminabox-ldap:
 
     docker run -d -p 2222:9292 woodie/geminabox-ldap
 
@@ -12,9 +12,9 @@ To upload a gem, authenticate as `tesla` with password `password`.
 
 ### Production Usage
 
-You will use Nginx and setup a CNAME. For testing, add the hostname `rubygems.example.com` to your `/etc/hosts` file.
+Use Nginx and setup a CNAME. For testing, add the hostname `rubygems.example.com` to your `/etc/hosts` file.
 
-Run the nginx-proxy proxy:
+Run the nginx-proxy container:
 
     docker run -d -p 80:80 --restart unless-stopped \
     -v /var/run/docker.sock:/tmp/docker.sock:ro woodie/nginx-proxy
@@ -31,10 +31,12 @@ Make sure `/var/lib/geminabox-data` is backed up on the host.
 
 ### Configuration
 
-Any environment variables that should be passed to the container can go in `our.env`  file.
+Environment variables that should be passed to the container can go in `our.env`  file.
+The `RACK_ENV` variable tell rack to behave in production mode (especially regarding errors).
 The `VIRTUAL_HOST` is used by the Nginx, the `HEADER_IMAGE` will replace the generic image,
 and the `AUTH_BACKDOOR` provides an upload token for users that have already authenticated.
 
+    RACK_ENV=production
     VIRTUAL_HOST=rubygems.example.com
     HEADER_IMAGE=http://bit.ly/2lJIYsJ
     AUTH_BACKDOOR=allow
@@ -57,7 +59,7 @@ For LDAP autentication, we must be able to construct a user's DN from `LDAP_BRAN
     LDAP_HOST=www.zflexldap.com
 
 
-For Active Directory, user DN need not include login. AD uses `sAMAccountname` and `LDAP_BASE` to bind.
+For Active Directory, user login need not be included in DN. AD uses `sAMAccountname` and `LDAP_BASE` to bind.
 
     LDAP_ATTRIBUTE=sAMAccountname
     LDAP_BASE=DC=example,DC=com

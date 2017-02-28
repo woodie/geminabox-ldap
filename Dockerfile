@@ -7,7 +7,6 @@ RUN mkdir -p /app/views
 ADD Gemfile /app
 ADD config.ru /app
 ADD views /app/views
-
 WORKDIR /app
 
 RUN bundle install
