@@ -18,39 +18,46 @@ Geminabox::Server.helpers do
   end
 
   def ldap_config
-    @ldap ||= OpenStruct.new DEFAULT_LDAP.merge(Hash[ENV.keys.map { |k| [k[5..-1].downcase, ENV[k]] if k[0..4] == 'LDAP_' }.compact])
+    return @ldap if @ldap
+    config = OpenStruct.new DEFAULT_LDAP.merge(Hash[ENV.keys.map { |k| [k[5..-1].downcase, ENV[k]] if k[0..4] == 'LDAP_' }.compact])
+    config.auth = {method: config.bind_method || :simple, username: config.bind_dn, password: config.bind_password} if config.bind_dn
+    @ldap = config
   end
 
   def container_id
-    `hostname`.strip
+    ENV['HOSTNAME'] || 'container_id'
   end
 
   def member(user, pass)
     return true if pass.eql?(container_id) and ENV['AUTH_BACKDOOR'].eql?('allow')
     return false if user.empty? or pass.empty?
     config = ldap_config
-    # should also support bind_dn and bind_pw
-    bind_dn = (config.attribute == 'sAMAccountname') ?
+    auth_dn = (config.attribute == 'sAMAccountname') ?
         "#{user}@#{config.base.gsub(/\w+=/,'').split(',')[-2..-1].join('.')}" :
         ["#{config.attribute}=#{user}", config.branch, config.base].compact.join(',')
     ldap = Net::LDAP.new config
-    ldap.auth(bind_dn, pass)
-    return false unless ldap.bind
-    return true if config.member.nil?
-    f = Net::LDAP::Filter.join(
+    ldap.auth(auth_dn, pass) unless config.bind_dn
+    ldap.bind
+    u = Net::LDAP::Filter.join(
         Net::LDAP::Filter.eq(config.attribute, user),
         Net::LDAP::Filter.eq('objectClass', 'user') |
         Net::LDAP::Filter.eq('objectClass', 'person') |
         Net::LDAP::Filter.eq('objectClass', 'inetOrgPerson') |
         Net::LDAP::Filter.eq('objectClass', 'organizationalPerson'))
-    person = ldap.search(filter: f, attributes: %w(dn memberOf)).first
-    f = Net::LDAP::Filter.join(
+    person = ldap.search(filter: u, attributes: %w(dn memberOf)).to_a.first
+    return false if person.nil?
+    auth_dn = person.dn unless (config.attribute == 'sAMAccountname')
+    ldap.auth(auth_dn, pass)
+    return false unless ldap.bind
+    return true if config.member.nil?
+    g = Net::LDAP::Filter.join(
         Net::LDAP::Filter.eq(*config.member.split('=')),
         Net::LDAP::Filter.eq('objectClass', 'group') |
         Net::LDAP::Filter.eq('objectClass', 'groupOfNames') |
         Net::LDAP::Filter.eq('objectClass', 'groupOfUniqueNames') |
         Net::LDAP::Filter.eq('objectClass', 'organizationalUnit'))
-    group = ldap.search(filter: f, attributes: %w(dn member uniqueMember)).first
+    group = ldap.search(filter: g, attributes: %w(dn member uniqueMember)).to_a.first
+    return false if group.nil?
     return true if person.respond_to?(:memberOf) && person.memberOf.include?(group.dn)
     return true if group.respond_to?(:member) && group.member.include?(person.dn)
     return true if group.respond_to?(:uniqueMember) && group.uniqueMember.include?(person.dn)
@@ -68,7 +75,8 @@ end
 class Geminabox::Server
   get '/faq' do
     @auth ||= Rack::Auth::Basic::Request.new(request.env)
-    @conf = OpenStruct.new( member: ldap_config.member, port: request.port,
+    @conf = OpenStruct.new( member: ldap_config.member,
+        port: ENV['PUBLISH_PORT'] || request.port,
         user: @auth.provided? ? @auth.credentials.first : 'username',
         host: @auth.provided? ? container_id : 'container_id' )
     erb :faq

@@ -1,7 +1,6 @@
 # geminabox-ldap
 Gem "in a box" with LDAP/AD authentication &amp; branding on Docker
 
-
 ### A Quick Demo
 
 To upload a gem, authenticate as `tesla` with password `password`.
@@ -32,29 +31,32 @@ and the `AUTH_BACKDOOR` provides an upload token for users that have already aut
 
     # General configuration
     RACK_ENV=production
+    PUBLISH_PORT=2222
     VIRTUAL_HOST=rubygems.example.com
     HEADER_IMAGE=http://bit.ly/2lJIYsJ
     AUTH_BACKDOOR=allow
 
 ### LDAP/AD Configuration
 
-For LDAP autentication, we don't (currently) provide an option to bind with `BASE_DN`, 
-instead we construct a user's DN from `LDAP_BRANCH` and `LDAP_BASE` and bind as that user.
-Use `LDAP_MEMBER` to restrict gem uploads to a specific group. For Active Directory,
-user login uses `sAMAccountname` and `LDAP_BASE` to bind.
+When `LDAP_BIND_DN` is not provided, `LDAP_ATTRIBUTE`, `LDAP_BRANCH`
+and `LDAP_BASE` are used for construct a DN for LDAP authentication,
+while `sAMAccountname` and `LDAP_BASE` are used for Active Directory.
+Use `LDAP_MEMBER` to restrict gem uploads to a specific group.
 
-    # Sample LDAP configurtion
+    # Sample LDAP configurtion (test-credentials: 'tesla', 'password')
     LDAP_ATTRIBUTE=uid
     LDAP_BASE=DC=example,DC=com
     LDAP_MEMBER=OU=scientists
     LDAP_HOST=ldap.forumsys.com
 
-    # SAMPLE LDAP configurtion with branch
+    # SAMPLE LDAP configurtion (test-credentials: 'testdev2', 'password')
     LDAP_ATTRIBUTE=uid
     LDAP_BASE=DC=zflexsoftware,DC=com
     LDAP_BRANCH=OU=users,OU=developers
     LDAP_MEMBER=CN=devgroup1
     LDAP_HOST=www.zflexldap.com
+    LDAP_BIND_DN=cn=ro_admin,ou=sysadmins,dc=zflexsoftware,dc=com
+    LDAP_BIND_PASSWORD=zflexpass
 
     # Sample AD configurtion
     LDAP_ATTRIBUTE=sAMAccountname
