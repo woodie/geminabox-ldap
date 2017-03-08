@@ -13,14 +13,14 @@ Make sure `/var/lib/geminabox-data` is backed up on the host.
 Pass configuration information by environment file (see examples below):
 
     docker run -d -p 2222:9292 --restart unless-stopped --env-file our.env \
-    -v /var/lib/geminabox-data:/app/data:rw woodie/geminabox-ldap
+    -v /var/lib/geminabox-data:/app/data:rw woodie/geminabox-ldap:latest
 
 ### Nginx Proxy
 
 Use Nginx and setup a CNAME. For testing, add the hostname `rubygems.example.com` to your `/etc/hosts` file.
 
     docker run -d -p 80:80 --restart unless-stopped \
-    -v /var/run/docker.sock:/tmp/docker.sock:ro woodie/nginx-proxy
+    -v /var/run/docker.sock:/tmp/docker.sock:ro woodie/nginx-proxy:latest
 
 ### General Configuration
 
@@ -39,7 +39,7 @@ and the `AUTH_BACKDOOR` provides an upload token for users that have already aut
 ### LDAP/AD Configuration
 
 When `LDAP_BIND_DN` is not provided, `LDAP_ATTRIBUTE`, `LDAP_BRANCH`
-and `LDAP_BASE` are used for construct a DN for LDAP authentication,
+and `LDAP_BASE` are used to construct a DN for LDAP authentication,
 while `sAMAccountname` and `LDAP_BASE` are used for Active Directory.
 Use `LDAP_MEMBER` to restrict gem uploads to a specific group.
 
